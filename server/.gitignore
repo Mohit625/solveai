@@ -1,0 +1,6 @@
+.vercel
+
+# Ad-hoc debugging photos, not real test fixtures (those live in
+# test/integration/fixtures/)
+test/*.jpeg
+test/*.jpg

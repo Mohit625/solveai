@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SolveAI</title>
+    <script>
+      // Runs before React mounts so there's no flash of the wrong theme on
+      // load — useDarkMode.js (src/hooks/) keeps this in sync afterwards.
+      (function () {
+        var stored = localStorage.getItem("solveai-theme");
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var isDark = stored ? stored === "dark" : prefersDark;
+        document.documentElement.classList.toggle("dark", isDark);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

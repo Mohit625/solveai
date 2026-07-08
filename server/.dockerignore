@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+
+.env
+.env.local
+
+test
+*.test.js
+test_manual_*.mjs
+
+.git
+.gitignore
+README.md
