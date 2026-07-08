@@ -4,6 +4,8 @@ A ChatGPT-like platform that solves coding and SQL problems straight from a scre
 (or paste) a LeetCode/Codeforces/HackerRank/GeeksforGeeks-style problem, and get back raw,
 runnable code in Monaco — no explanations, no markdown, just the solution.
 
+Live: [client](https://client-two-tan-26.vercel.app) · [API](https://server-ten-sand-83.vercel.app)
+
 ## Features
 
 - **Screenshot in, code out** — drag-drop or paste (Ctrl+V) a problem screenshot; get back
