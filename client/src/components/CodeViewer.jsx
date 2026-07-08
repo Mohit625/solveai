@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import toast from "react-hot-toast";
 import { Button } from "./ui/button";
@@ -37,8 +38,27 @@ function handleDownload(code, language) {
   URL.revokeObjectURL(url);
 }
 
+// Monaco's own height defaults to filling a fixed-size container (scrolling
+// internally past that), not growing to fit its content — the opposite of
+// what a read-only "show the whole solution" viewer needs. Track content
+// height in state and feed it back as the Editor's height so the container
+// always grows/shrinks to exactly fit the code, both on mount and whenever
+// the code changes (e.g. a follow-up edit produces a shorter/longer answer).
+function useAutoHeight() {
+  const [height, setHeight] = useState(100);
+
+  function handleMount(editor) {
+    const update = () => setHeight(editor.getContentHeight());
+    update();
+    editor.onDidContentSizeChange(update);
+  }
+
+  return { height, handleMount };
+}
+
 export function CodeViewer({ code, language }) {
   const { isDark } = useDarkMode();
+  const { height, handleMount } = useAutoHeight();
 
   return (
     <div className="overflow-hidden rounded-md border border-border">
@@ -54,11 +74,25 @@ export function CodeViewer({ code, language }) {
         </div>
       </div>
       <Editor
-        height="420px"
+        height={`${height}px`}
         theme={isDark ? "vs-dark" : "light"}
         language={MONACO_LANGUAGE_MAP[language] || "plaintext"}
         value={code || ""}
-        options={{ readOnly: true, minimap: { enabled: false }, fontSize: 14 }}
+        onMount={handleMount}
+        options={{
+          readOnly: true,
+          minimap: { enabled: false },
+          fontSize: 14,
+          lineNumbers: "off",
+          wordWrap: "on",
+          scrollBeyondLastLine: false,
+          scrollbar: { vertical: "hidden", horizontal: "hidden" },
+          overviewRulerLanes: 0,
+          // Not on by default — without it, rotating a phone or resizing the
+          // window leaves the word-wrap point (and therefore the computed
+          // content height) stale until something else forces a relayout.
+          automaticLayout: true,
+        }}
       />
     </div>
   );
