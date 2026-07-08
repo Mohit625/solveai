@@ -13,6 +13,7 @@ import {
   getErrorMessage,
   requiresLanguageSelection,
 } from "../services/api";
+import { compressImages } from "../utils/compressImage";
 
 const FOLLOW_UPS = [
   { label: "TLE", text: "TLE" },
@@ -77,9 +78,15 @@ export default function Chat() {
     setBusy(true);
     setLastFailedAction(null);
     setPendingLanguageFiles(null);
-    startSimulatedStages(true);
+    setStage("Preparing screenshots...");
     try {
-      const message = await sendScreenshot(chatId, files, setUploadProgress, language);
+      // Resized/re-encoded client-side so the upload reliably fits under
+      // Vercel's 4.5MB request body cap — real phone-camera photos can be
+      // 5-10x that on their own, which otherwise fails with a raw 413 from
+      // Vercel's edge before our own code even runs.
+      const compressed = await compressImages(files);
+      startSimulatedStages(true);
+      const message = await sendScreenshot(chatId, compressed, setUploadProgress, language);
       setMessages((prev) => [...prev, message]);
       // The first screenshot's OCR text may have just auto-titled this chat
       // (see messageService.handleScreenshotMessage) — refresh the sidebar
